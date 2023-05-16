@@ -1,0 +1,16 @@
+.btn-outline-primary:hover {
+  transform: scale(1.02);
+}
+
+.btn-outline-danger:hover {
+  transform: scale(1.02);
+}
+
+.card {
+  transition: all 0.3s ease-in-out; /* add transition effect */
+}
+
+.card:hover {
+  transform: scale(1.05); /* increase the scale of the card on hover */
+  box-shadow: 0px 0px 10px rgba
+}
