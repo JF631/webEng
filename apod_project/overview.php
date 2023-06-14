@@ -59,6 +59,12 @@
     </div>
   </div>
 
+  <!-- Spinner -->
+  <div id="spinner" class="text-center" style="display: none;">
+    <div class="spinner-border text-primary" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
 
   <!-- Image Modal -->
   <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel"
@@ -71,7 +77,6 @@
       </div>
     </div>
   </div>
-
 
   <!-- Info Modal -->
   <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel"
@@ -117,17 +122,29 @@
       // Handle gallery button click
       $('#toggleGalleryBtn').click(function () {
         $('#imageGallery').toggle();
+        $('#toggleGalleryBtn').text(function (i, text) {
+          return text === "show archiv" ? "Hide archiv" : "show archiv";
+        });
         if ($('#imageGallery').is(':visible')) {
           $('#imageGallery')[0].scrollIntoView({ behavior: 'smooth' });
+
+          // Show the spinner
+          $('#toggleGalleryBtn').text('Loading...');
+          $('#spinner').show();
 
           // Load gallery images using AJAX
           $.ajax({
             url: 'image_gallery.php',
             success: function (response) {
               $('#galleryImages').html(response);
+              $('#toggleGalleryBtn').text('Hide archiv');
+              // Hide the spinner
+              $('#spinner').hide();
             },
             error: function () {
               alert('Error loading gallery images.');
+              // Hide the spinner
+              $('#spinner').hide();
             }
           });
         }

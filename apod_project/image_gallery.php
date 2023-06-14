@@ -2,7 +2,7 @@
 // Fetch APOD JSON data for the gallery
 include 'fetch_apod.php';
 $currentDate = date("Y-m-d");
-$oneHundredDaysAgo = date("Y-m-d", strtotime('-7 days', strtotime($currentDate)));
+$oneHundredDaysAgo = date("Y-m-d", strtotime('-100 days', strtotime($currentDate)));
 $galleryJson = fetchAPODs($oneHundredDaysAgo, $currentDate);
 
 foreach ($galleryJson as $galleryItem) {
