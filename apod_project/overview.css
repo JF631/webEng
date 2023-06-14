@@ -1,0 +1,88 @@
+.owl-carousel .item {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.owl-carousel .item .image-card {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-radius: 20px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+  max-width: 500px;
+  /* Maximum width for the card body */
+  max-height: 500px;
+  /* Maximum height for the card body */
+  margin: 0 auto;
+  /* Center the card horizontally */
+  overflow: hidden;
+}
+
+.owl-carousel .item .image-card .image-container {
+  max-width: 98%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.owl-carousel .item .image-card img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.owl-carousel .item .image-card .info-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  width: 30px;
+  height: 30px;
+  font-size: 20px;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+
+.owl-carousel .item .image-card .image-info {
+  flex-grow: 1;
+  display: none;
+  /* Initially hide the info box */
+  flex-direction: column;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  border-radius: 10px;
+  color: #fff;
+}
+
+.owl-carousel .item .image-card .image-info h5 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.carousel-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Custom styles for responsive gallery */
+.gallery-card {
+  margin-bottom: 20px;
+}
