@@ -4,11 +4,14 @@
 <head>
   <title>Astronomy Picture of the Day</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.1/font/bootstrap-icons.css">
   <link rel="stylesheet" type="text/css"
     href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
   <link rel="stylesheet" type="text/css"
     href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
   <link rel="stylesheet" type="text/css" href="overview.css">
+
+  <?php include('header.php'); ?>
 
 </head>
 
@@ -159,9 +162,42 @@
         $('.modal-image').attr('src', src);
         $('.modal-image').attr('alt', title);
       });
+
+      // Attach like button click event to dynamically added elements
+      $(document).on('click', '.like-button', function () {
+        // Get the parent card element
+        var card = $(this).closest('.gallery-card');
+        var likeButton = $(this);
+
+        // Toggle the 'liked' class
+        card.toggleClass('liked');
+        var imageDate = $(this).closest('.image-link').data('date');
+        console.log('Gallery Date:', imageDate);
+
+        // Assign 'likeButton' to a separate variable to access it in the AJAX success function
+        var button = likeButton;
+
+        $.ajax({
+          url: 'like_image.php',
+          method: 'POST',
+          data: { date: imageDate },
+          success: function (response) {
+            // Update the heart icon based on the 'liked' class
+            if (card.hasClass('liked')) {
+              button.html('<i class="bi bi-heart-fill"></i>');
+            } else {
+              button.html('<i class="bi bi-heart"></i>');
+            }
+          },
+          error: function () {
+            alert('Error liking image.');
+          }
+        });
+      });
     });
 
   </script>
+
 </body>
 
 </html>
