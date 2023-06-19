@@ -16,6 +16,19 @@
 </head>
 
 <body>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="input-group mt-3 mb-3">
+          <input id="searchInput" type="text" class="form-control" placeholder="Let's find your birthday image...">
+          <div class="input-group-append">
+            <button id="searchButton" class="btn btn-primary" type="button">Find</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <h1 class="text-center">Astronomy Picture of the Day</h1>
   <div class="container">
     <div class="row justify-content-center">
@@ -75,7 +88,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-body text-center">
-          <img class="modal-image img-fluid" src="" alt="">
+          <img id="modalImage" class="modal-image img-fluid" src="" alt="">
         </div>
       </div>
     </div>
@@ -98,6 +111,26 @@
       </div>
     </div>
   </div>
+
+  <!-- Not logged in Modal -->
+  <div class="modal fade" id="unauthorizedModal" tabindex="-1" aria-labelledby="unauthorizedModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="unauthorizedModalLabel">Please log in</h5>
+          <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>You need to be logged in in order to save an image</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
@@ -163,6 +196,41 @@
         $('.modal-image').attr('alt', title);
       });
 
+      $('#searchButton').click(function () {
+        var searchText = $('#searchInput').val();
+
+        // Call fetchAPOD function with the search text as the date
+        $.ajax({
+          url: 'birthday_img.php',
+          method: 'POST',
+          data: { date: searchText },
+          success: function (response) {
+            // Handle the response data
+            console.log('APOD JSON:', response);
+
+            // Parse the response as JSON
+            var apodJson = JSON.parse(response);
+
+            // Check if the response contains a valid image URL
+            if (apodJson && apodJson.url) {
+              var imageUrl = apodJson.url;
+
+              // Update the modal image source
+              $('#modalImage').attr('src', imageUrl);
+
+              // Show the modal
+              $('#imageModal').modal('show');
+            } else {
+              alert('Error: Invalid image data.');
+            }
+          },
+          error: function () {
+            alert('Error fetching APOD data: it is only working from 01 January 1996 onwards, sadly');
+          }
+        });
+      });
+
+
       // Attach like button click event to dynamically added elements
       $(document).on('click', '.like-button', function () {
         // Get the parent card element
@@ -171,8 +239,9 @@
 
         // Toggle the 'liked' class
         card.toggleClass('liked');
-        var imageDate = $(this).closest('.image-link').data('date');
+        var imageDate = $(this).closest('.gallery-card').find('.image-link').data('date');
         console.log('Gallery Date:', imageDate);
+
 
         // Assign 'likeButton' to a separate variable to access it in the AJAX success function
         var button = likeButton;
@@ -183,14 +252,24 @@
           data: { date: imageDate },
           success: function (response) {
             // Update the heart icon based on the 'liked' class
-            if (card.hasClass('liked')) {
+            if (response === 'liked') {
+              card.addClass('liked');
               button.html('<i class="bi bi-heart-fill"></i>');
             } else {
+              card.removeClass('liked');
               button.html('<i class="bi bi-heart"></i>');
             }
           },
-          error: function () {
-            alert('Error liking image.');
+          error: function (xhr) {
+            if (xhr.status === 401) {
+              $('#unauthorizedModal').modal('show');
+            } else if (xhr.status === 400) {
+              alert('Error: Bad request.');
+            } else if (xhr.status === 500) {
+              alert('Error: Internal server error.');
+            } else {
+              alert('Error liking image.');
+            }
           }
         });
       });

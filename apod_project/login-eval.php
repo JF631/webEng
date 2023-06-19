@@ -20,24 +20,20 @@ if ($stmt->execute()) {
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
 
-    if($row == null) {
-        echo "Incorrect username or password";
+    if ($row == null || !password_verify($password, $row['password'])) {
+        http_response_code(401);
         exit();
-    }
-    if (password_verify($password, $row['password'])) {
+    } else {
         session_start();
         $_SESSION['username'] = $username;
         header("Location: overview.php");
         exit();
-    } else {
-        echo "Incorrect username or password";
     }
 } else {
+    http_response_code(500);
     echo "Error: " . $stmt->error;
 }
 
 $stmt->close();
 $conn->close();
-
-
 ?>

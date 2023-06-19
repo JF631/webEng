@@ -14,4 +14,11 @@ function fetchAPODs($startDate, $endDate){
     return $apodJson;
 }
 
+function fetchAPOD($date){
+    $url = "https://api.nasa.gov/planetary/apod?api_key=6AT1BjGHJIL1yr47QApFUnVmVa2dxmTfhpSevfaD&date=$date";
+    $apodData = file_get_contents($url);
+    $apodJson = json_decode($apodData);
+    return $apodJson;
+}
+
 ?>
