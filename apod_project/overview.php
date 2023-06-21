@@ -75,6 +75,11 @@
     </div>
   </div>
 
+  <div class="text-center mt-3">
+    <button id="loadMoreButton" class="btn btn-primary" style="display: none;">Load 10 More</button>
+  </div>
+
+
   <!-- Spinner -->
   <div id="spinner" class="text-center" style="display: none;">
     <div class="spinner-border text-primary" role="status">
@@ -139,6 +144,7 @@
   <script>
     // Initialize the carousel
     $(document).ready(function () {
+      var dayOffset = 10;
       $('.owl-carousel').owlCarousel({
         items: 1,
         loop: true,
@@ -171,11 +177,14 @@
           // Load gallery images using AJAX
           $.ajax({
             url: 'image_gallery.php',
+            method: 'POST',
+            data: { offset: dayOffset },
             success: function (response) {
               $('#galleryImages').html(response);
               $('#toggleGalleryBtn').text('Hide archiv');
               // Hide the spinner
               $('#spinner').hide();
+              $('#loadMoreButton').show();
             },
             error: function () {
               alert('Error loading gallery images.');
@@ -183,7 +192,31 @@
               $('#spinner').hide();
             }
           });
+        } else {
+          $('#loadMoreButton').hide();
         }
+      });
+
+      $('#loadMoreButton').click(function () {
+        dayOffset += 10;
+        $.ajax({
+          url: 'image_gallery.php',
+          method: 'POST',
+          data: { offset: dayOffset },
+          success: function (response) {
+            $('#galleryImages').html(response);
+            $('#toggleGalleryBtn').text('Hide archiv');
+            // Hide the spinner
+            $('#spinner').hide();
+            $('#loadMoreButton').show();
+
+          },
+          error: function () {
+            alert('Error loading gallery images.');
+            // Hide the spinner
+            $('#spinner').hide();
+          }
+        });
       });
 
       // Handle image link click

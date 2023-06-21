@@ -1,14 +1,19 @@
 <?php
-session_start();    
+session_start();
 // Fetch APOD JSON data for the gallery
 include 'fetch_apod.php';
+
+// Check if an offset value is provided
+$offset = isset($_POST['offset']) ? intval($_POST['offset']) : 0;
+$dayString = '-' . $offset . ' days';
+
 $currentDate = date("Y-m-d");
-$oneHundredDaysAgo = date("Y-m-d", strtotime('-8 days', strtotime($currentDate)));
+$oneHundredDaysAgo = date("Y-m-d", strtotime($dayString, strtotime($currentDate)));
 $galleryJson = fetchAPODs($oneHundredDaysAgo, $currentDate);
 
 $loggedIn = isset($_SESSION['username']);
 $username = '';
-if($loggedIn){
+if ($loggedIn) {
     $username = $_SESSION['username'];
 }
 
@@ -31,21 +36,20 @@ foreach ($galleryJson as $galleryItem) {
     // Check if the image is already liked by the current user
     $isLiked = false; // Assume it's not liked by default
 
-    if($loggedIn){
+    if ($loggedIn) {
         $sql = "SELECT * FROM Images WHERE username = '$username' AND date = '$galleryDate'";
         $result = $conn->query($sql);
         if ($result && $result->num_rows > 0) {
             // The image is liked by the user
             $isLiked = true;
             echo '<script>console.log("Image Date: ' . $galleryDate . '");</script>';
-
         }
     }
 
-    echo '<div class="col-lg-3 col-md-6 col-sm-6">';
+    echo '<div class="col-lg-3 col-md-6 col-sm-6 gallery-item">'; // Added 'gallery-item' class
     echo '<div class="card gallery-card position-relative">';
     echo '<a href="#" class="image-link" data-toggle="modal" data-target="#imageModal" data-src="' . $galleryImageUrl . '" data-title="' . $galleryTitle . '" data-date="' . $galleryDate . '">';
-    echo '<img class="card-img-top lazy-image img-fluid" src="' . $galleryImageUrl . '" alt="' . $galleryTitle . '"></a>';
+    echo '<img class="card-img-top lazy-image img-fluid" style="width: 100%; height: 200px; object-fit: cover;" src="' . $galleryImageUrl . '" alt="' . $galleryTitle . '"></a>';
 
     echo '<div class="card-body">';
     echo '<div class="d-flex justify-content-between">';
@@ -62,5 +66,4 @@ foreach ($galleryJson as $galleryItem) {
 }
 
 $conn->close(); // Close the database connection
-
 ?>

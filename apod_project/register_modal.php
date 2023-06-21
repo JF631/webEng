@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Login Page</title>
+    <title>Registration Page</title>
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
@@ -18,19 +18,19 @@
 </head>
 
 <body>
-    <div id="loginModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel"
+    <div id="registerModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="loginModalLabel">Login</h5>
+                    <h5 class="modal-title" id="registerModalLabel">Register</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <!-- Login form HTML code -->
-                    <form id="loginForm" method="POST" action="login-eval.php">
+                    <!-- Registration form HTML code -->
+                    <form id="registerForm" method="POST" action="register-eval.php">
                         <div class="form-group">
                             <label for="username">Username</label>
                             <input type="text" class="form-control" id="username" name="username"
@@ -39,57 +39,52 @@
                         <div class="form-group">
                             <label for="password">Password</label>
                             <input type="password" class="form-control" id="password" name="password"
-                                autocomplete="current-password" required>
+                                autocomplete="new-password" required>
                         </div>
-                        <button type="submit" class="btn btn-primary">Login</button>
-                        <button id="registerBtn" type="button" class="btn btn-secondary" data-dismiss="modal"
-                            data-toggle="modal" data-target="register_modal.php">Register</button>
+                        <div class="form-group">
+                            <label for="passwordRepeat">Repeat Password</label>
+                            <input type="password" class="form-control" id="passwordRepeat" name="passwordRepeat"
+                                autocomplete="new-password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Register</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-
-    <?php include 'register_modal.php'; ?>
     <script>
-        // JavaScript code for handling login form submission and other functionalities
+        // JavaScript code for handling registration form submission and other functionalities
         $(document).ready(function () {
-            // Show the login modal when the "login" button is clicked
+            // Show the register modal when the "register" button is clicked
             $('.btn-outline-secondary').click(function () {
-                if ($(this).text() === 'login') {
-                    $('#loginModal').modal('show');
+                if ($(this).text() === 'register') {
+                    $('#registerModal').modal('show');
                 }
             });
 
-            // Handle login form submission
-            $('#loginForm').submit(function (event) {
+            // Handle registration form submission
+            $('#registerForm').submit(function (event) {
                 event.preventDefault(); // Prevent the default form submission
 
-                // Perform AJAX login request
+                // Perform AJAX registration request
                 $.ajax({
                     type: 'POST',
-                    url: 'login-eval.php',
+                    url: 'register-eval.php',
                     data: $(this).serialize(), // Serialize the form data
-                    statusCode: {
-                        401: function () {
-                            // Display a message in the modal for unauthorized access
-                            $('#loginModal .modal-body').text('Unauthorized access. Please check your credentials.');
-                        }
-                    },
                     success: function () {
-                        location.reload(); // Reload the page after successful login
+                        // Display a success message in the modal or redirect to a success page
+                        $('#registerModal .modal-body').text('Registration successful!');
+                        // Alternatively, you can redirect the user to a success page
+                        // window.location.href = 'success.php';
                     },
-                    error: function () {
-                        // Handle other errors, if any
+                    error: function (xhr) {
+                        if (xhr.status === 401) {
+                            $('#registerModal .modal-body').text('Registration failed. Please try again.');
+                        } 
                     }
                 });
             });
-
-            $('#registerBtn').click(function (e) {
-                $('#registerModal').modal('show');
-                    e.preventPropagation();
-            })
         });
     </script>
 </body>
