@@ -27,7 +27,7 @@ if ($stmt->execute()) {
         session_start();
         $_SESSION['username'] = $username;
         header("Location: overview.php");
-        exit();
+        exit;
     }
 } else {
     http_response_code(500);

@@ -32,18 +32,18 @@
                     <!-- Registration form HTML code -->
                     <form id="registerForm" method="POST" action="register-eval.php">
                         <div class="form-group">
-                            <label for="username">Username</label>
-                            <input type="text" class="form-control" id="username" name="username"
+                            <label for="reg_username">Username</label>
+                            <input type="text" class="form-control" id="reg_username" name="username"
                                 autocomplete="username" required>
                         </div>
                         <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" class="form-control" id="password" name="password"
+                            <label for="reg_passwd">Password</label>
+                            <input type="password" class="form-control" id="reg_passwd" name="password"
                                 autocomplete="new-password" required>
                         </div>
                         <div class="form-group">
-                            <label for="passwordRepeat">Repeat Password</label>
-                            <input type="password" class="form-control" id="passwordRepeat" name="passwordRepeat"
+                            <label for="reg_passwdRepeat">Repeat Password</label>
+                            <input type="password" class="form-control" id="reg_passwdRepeat" name="passwordRepeat"
                                 autocomplete="new-password" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Register</button>

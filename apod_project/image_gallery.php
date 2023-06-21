@@ -3,13 +3,15 @@ session_start();
 // Fetch APOD JSON data for the gallery
 include 'fetch_apod.php';
 
-// Check if an offset value is provided
-$offset = isset($_POST['offset']) ? intval($_POST['offset']) : 0;
-$dayString = '-' . $offset . ' days';
+$startDate = isset($_POST['startDate']) ? $_POST['startDate'] : date("Y-m-d");
+$endDate = isset($_POST['endDate']) ? $_POST['endDate'] : date("Y-m-d");
 
-$currentDate = date("Y-m-d");
-$oneHundredDaysAgo = date("Y-m-d", strtotime($dayString, strtotime($currentDate)));
-$galleryJson = fetchAPODs($oneHundredDaysAgo, $currentDate);
+echo '<script>';
+echo 'console.log("Start Date: ' . $startDate . '");';
+echo 'console.log("End Date: ' . $endDate . '");';
+echo '</script>';
+
+$galleryJson = fetchAPODs($endDate, $startDate);
 
 $loggedIn = isset($_SESSION['username']);
 $username = '';

@@ -18,6 +18,13 @@
         $btn_text = "logout";
         $action = "logout.php";
     }
+
+    // Handle logout logic
+    if (isset($_GET['logout'])) {
+        session_destroy();
+        header("Location: login.html"); // Redirect to login page after logout
+        exit;
+    }
     ?>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -42,7 +49,7 @@
                 <p class="mr-sm-2">
                     <?php echo $loggedInUser; ?>
                 </p>
-                <button class="btn btn-outline-secondary my-2 my-sm-0 logout" type="button"><?php echo $btn_text; ?></button>
+                <a class="btn btn-outline-secondary my-2 my-sm-0 logout" href="<?php echo $action; ?>"><?php echo $btn_text; ?></a>
             </form>
         </div>
     </nav>
@@ -54,26 +61,14 @@
     <script>
         $(document).ready(function () {
             // Show the login modal when the "login" button is clicked
-            $('.btn-outline-secondary').click(function () {
+            $('.btn-outline-secondary').click(function (e) {
                 if ($(this).text() === 'login') {
                     $('#loginModal').modal('show');
-                    e.preventPropagation();
+                    e.preventDefault();
                 }
-            });
-
-            // Handle logout button click
-            $('.btn-outline-secondary.logout').click(function () {
-                $.ajax({
-                    type: 'GET',
-                    url: 'logout.php',
-                    success: function (response) {
-                        location.reload(); // Reload the page after logout
-                    }
-                });
             });
         });
     </script>
-
 
 </body>
 

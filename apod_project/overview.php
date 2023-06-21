@@ -38,7 +38,7 @@
           // Fetch APOD JSON data
           include 'fetch_apod.php';
           $currentDate = date("Y-m-d");
-          $sevenDaysAgo = date("Y-m-d", strtotime('-7 days', strtotime($currentDate)));
+          $sevenDaysAgo = date("Y-m-d", strtotime('-3 days', strtotime($currentDate)));
           $apodJson = fetchAPODs($sevenDaysAgo, $currentDate);
 
           foreach ($apodJson as $apodItem) {
@@ -144,7 +144,19 @@
   <script>
     // Initialize the carousel
     $(document).ready(function () {
-      var dayOffset = 10;
+
+      var currentDate = new Date();
+      var endDate = new Date(currentDate);
+      endDate.setDate(currentDate.getDate() - 5);
+      var firstUsage = 0;
+
+      var formattedDate = currentDate.toISOString().split('T')[0];
+      var formattedEndDate = endDate.toISOString().split('T')[0];
+
+      console.log(formattedDate);
+      console.log(formattedEndDate);
+
+
       $('.owl-carousel').owlCarousel({
         items: 1,
         loop: true,
@@ -163,6 +175,7 @@
 
       // Handle gallery button click
       $('#toggleGalleryBtn').click(function () {
+        // firstUsage == 0 ? 1 : 1;
         $('#imageGallery').toggle();
         $('#toggleGalleryBtn').text(function (i, text) {
           return text === "show archiv" ? "Hide archiv" : "show archiv";
@@ -174,11 +187,12 @@
           $('#toggleGalleryBtn').text('Loading...');
           $('#spinner').show();
 
+
           // Load gallery images using AJAX
           $.ajax({
             url: 'image_gallery.php',
             method: 'POST',
-            data: { offset: dayOffset },
+            data: { startDate: formattedDate, endDate: formattedEndDate },
             success: function (response) {
               $('#galleryImages').html(response);
               $('#toggleGalleryBtn').text('Hide archiv');
@@ -198,18 +212,21 @@
       });
 
       $('#loadMoreButton').click(function () {
-        dayOffset += 10;
+        currentDate.setDate(endDate.getDate());
+        endDate.setDate(currentDate.getDate() - 5);
+
+        formattedDate = currentDate.toISOString().split('T')[0];
+        formattedEndDate = endDate.toISOString().split('T')[0];
         $.ajax({
           url: 'image_gallery.php',
           method: 'POST',
-          data: { offset: dayOffset },
+          data: { startDate: formattedDate, endDate: formattedEndDate },
           success: function (response) {
-            $('#galleryImages').html(response);
+            $('#galleryImages').append(response);
             $('#toggleGalleryBtn').text('Hide archiv');
             // Hide the spinner
             $('#spinner').hide();
             $('#loadMoreButton').show();
-
           },
           error: function () {
             alert('Error loading gallery images.');

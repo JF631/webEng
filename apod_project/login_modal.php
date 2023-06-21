@@ -50,7 +50,6 @@
         </div>
     </div>
 
-
     <?php include 'register_modal.php'; ?>
     <script>
         // JavaScript code for handling login form submission and other functionalities
@@ -64,32 +63,22 @@
 
             // Handle login form submission
             $('#loginForm').submit(function (event) {
-                event.preventDefault(); // Prevent the default form submission
 
-                // Perform AJAX login request
-                $.ajax({
-                    type: 'POST',
-                    url: 'login-eval.php',
-                    data: $(this).serialize(), // Serialize the form data
-                    statusCode: {
-                        401: function () {
-                            // Display a message in the modal for unauthorized access
-                            $('#loginModal .modal-body').text('Unauthorized access. Please check your credentials.');
-                        }
-                    },
-                    success: function () {
-                        location.reload(); // Reload the page after successful login
-                    },
-                    error: function () {
-                        // Handle other errors, if any
-                    }
-                });
+                // Form submission is handled directly by the action attribute
+
+                
+
+                // The default form submission behavior will be triggered automatically
+                // and the browser will navigate to the login-eval.php page with the form data.
+
+                // If you want to prevent the default form submission behavior, you can uncomment the following line:
+                // event.preventDefault();
             });
 
             $('#registerBtn').click(function (e) {
                 $('#registerModal').modal('show');
-                    e.preventPropagation();
-            })
+                e.preventPropagation();
+            });
         });
     </script>
 </body>
