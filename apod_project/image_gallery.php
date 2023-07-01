@@ -29,6 +29,10 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+if(empty($galleryJson)){
+    return [];
+}
+
 foreach ($galleryJson as $galleryItem) {
     $galleryTitle = $galleryItem->title;
     $galleryImageUrl = $galleryItem->url;

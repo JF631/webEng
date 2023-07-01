@@ -10,6 +10,9 @@
   <link rel="stylesheet" type="text/css"
     href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
   <link rel="stylesheet" type="text/css" href="overview.css">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
 
   <?php include('header.php'); ?>
 
@@ -20,7 +23,8 @@
     <div class="row justify-content-center">
       <div class="col-md-8">
         <div class="input-group mt-3 mb-3">
-          <input id="searchInput" type="text" class="form-control" placeholder="Let's find your birthday image...">
+          <input id="searchInput" type="text" class="form-control datepicker"
+            placeholder="Let's find your birthday image... (yyyy-MM-dd)">
           <div class="input-group-append">
             <button id="searchButton" class="btn btn-primary" type="button">Find</button>
           </div>
@@ -39,7 +43,12 @@
           include 'fetch_apod.php';
           $currentDate = date("Y-m-d");
           $sevenDaysAgo = date("Y-m-d", strtotime('-3 days', strtotime($currentDate)));
+          $currentDate = date("Y-m-d", strtotime('-1 days', strtotime($currentDate)));
           $apodJson = fetchAPODs($sevenDaysAgo, $currentDate);
+
+          if (empty($apodJson)) {
+            echo 'The APOD API seems to not be working. Please come back later!';
+          }
 
           foreach ($apodJson as $apodItem) {
             $apodTitle = $apodItem->title;
@@ -145,6 +154,7 @@
     // Initialize the carousel
     $(document).ready(function () {
 
+
       var currentDate = new Date();
       var endDate = new Date(currentDate);
       endDate.setDate(currentDate.getDate() - 5);
@@ -174,12 +184,18 @@
       });
 
       // Handle gallery button click
+      var buttonEnabled = true;
+
       $('#toggleGalleryBtn').click(function () {
-        // firstUsage == 0 ? 1 : 1;
+        if (!buttonEnabled) {
+          return; // Do nothing if button is disabled
+        }
+
         $('#imageGallery').toggle();
         $('#toggleGalleryBtn').text(function (i, text) {
           return text === "show archiv" ? "Hide archiv" : "show archiv";
         });
+
         if ($('#imageGallery').is(':visible')) {
           $('#imageGallery')[0].scrollIntoView({ behavior: 'smooth' });
 
@@ -187,6 +203,9 @@
           $('#toggleGalleryBtn').text('Loading...');
           $('#spinner').show();
 
+          // Disable the button
+          buttonEnabled = false;
+          $('#toggleGalleryBtn').prop('disabled', true);
 
           // Load gallery images using AJAX
           $.ajax({
@@ -199,11 +218,19 @@
               // Hide the spinner
               $('#spinner').hide();
               $('#loadMoreButton').show();
+
+              // Enable the button
+              buttonEnabled = true;
+              $('#toggleGalleryBtn').prop('disabled', false);
             },
             error: function () {
               alert('Error loading gallery images.');
               // Hide the spinner
               $('#spinner').hide();
+
+              // Enable the button
+              buttonEnabled = true;
+              $('#toggleGalleryBtn').prop('disabled', false);
             }
           });
         } else {
@@ -211,30 +238,54 @@
         }
       });
 
+
       $('#loadMoreButton').click(function () {
-        currentDate.setDate(endDate.getDate());
-        endDate.setDate(currentDate.getDate() - 5);
+        currentDate.setDate(currentDate.getDate() - 10);
+        endDate.setDate(endDate.getDate() - 10);
+
+        // Adjust month transition if necessary
+        // if (currentDate.getDate() > endDate.getDate()) {
+        //   currentDate.setMonth(currentDate.getMonth() - 1);
+        // }
 
         formattedDate = currentDate.toISOString().split('T')[0];
         formattedEndDate = endDate.toISOString().split('T')[0];
+
+        console.log(formattedDate);
+        console.log(formattedEndDate);
+
+        // Disable the button
+        $('#loadMoreButton').prop('disabled', true);
+        $('#loadMoreButton').text('Loading...');
+
         $.ajax({
           url: 'image_gallery.php',
           method: 'POST',
           data: { startDate: formattedDate, endDate: formattedEndDate },
           success: function (response) {
+            console.log(response);
             $('#galleryImages').append(response);
             $('#toggleGalleryBtn').text('Hide archiv');
             // Hide the spinner
             $('#spinner').hide();
             $('#loadMoreButton').show();
+
+            // Enable the button
+            $('#loadMoreButton').prop('disabled', false);
+            $('#loadMoreButton').text('Load More');
           },
           error: function () {
             alert('Error loading gallery images.');
             // Hide the spinner
             $('#spinner').hide();
+
+            // Enable the button
+            $('#loadMoreButton').prop('disabled', false);
+            $('#loadMoreButton').text('Load More');
           }
         });
       });
+
 
       // Handle image link click
       $(document).on('click', '.image-link', function () {

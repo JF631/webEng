@@ -35,6 +35,7 @@
                             <label for="reg_username">Username</label>
                             <input type="text" class="form-control" id="reg_username" name="username"
                                 autocomplete="username" required>
+                            <span id="usernameErrorMessage" class="text-danger" style="display: none;">Username exists</span>
                         </div>
                         <div class="form-group">
                             <label for="reg_passwd">Password</label>
@@ -75,13 +76,15 @@
                     success: function () {
                         // Display a success message in the modal or redirect to a success page
                         $('#registerModal .modal-body').text('Registration successful!');
+                        location.reload();
                         // Alternatively, you can redirect the user to a success page
                         // window.location.href = 'success.php';
                     },
                     error: function (xhr) {
                         if (xhr.status === 401) {
-                            $('#registerModal .modal-body').text('Registration failed. Please try again.');
-                        } 
+                            // Show the error message below the username input
+                            $('#usernameErrorMessage').show();
+                        }
                     }
                 });
             });

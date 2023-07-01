@@ -35,6 +35,8 @@
                             <label for="username">Username</label>
                             <input type="text" class="form-control" id="username" name="username"
                                 autocomplete="username" required>
+                            <span id="usernameErrorMessage" class="text-danger" style="display: none;">Incorrect
+                                username</span>
                         </div>
                         <div class="form-group">
                             <label for="password">Password</label>
@@ -63,16 +65,25 @@
 
             // Handle login form submission
             $('#loginForm').submit(function (event) {
+                // Prevent the default form submission behavior
+                event.preventDefault();
 
-                // Form submission is handled directly by the action attribute
-
-                
-
-                // The default form submission behavior will be triggered automatically
-                // and the browser will navigate to the login-eval.php page with the form data.
-
-                // If you want to prevent the default form submission behavior, you can uncomment the following line:
-                // event.preventDefault();
+                // Perform an AJAX request to login-eval.php
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: $(this).attr('method'),
+                    data: $(this).serialize(),
+                    statusCode: {
+                        401: function () {
+                            // Show the error message below the username input
+                            $('#usernameErrorMessage').show();
+                        },
+                        200: function () {
+                            // Reload the page on successful login
+                            location.reload();
+                        }
+                    }
+                });
             });
 
             $('#registerBtn').click(function (e) {

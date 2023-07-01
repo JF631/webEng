@@ -14,14 +14,12 @@ $conn = new mysqli($servername, $db_user, $db_password, $dbname);
 $sql = "SELECT name FROM Users WHERE name = '$username'";
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
-    // Username already exists, redirect to register page
+    // Username already exists
     http_response_code(401);
     exit();
 }
 
 if (strcmp($password, $passwordRepeat) == 0) {
-
-
     $username = $_POST['username'];
     $password = $_POST['password'];
 
@@ -46,5 +44,9 @@ if (strcmp($password, $passwordRepeat) == 0) {
         header("Location: register.html");
         echo "Error: " . $sql . "<br>" . $conn->error;
     }
+}
+else{
+    http_response_code(401);
+    exit();
 }
 ?>
